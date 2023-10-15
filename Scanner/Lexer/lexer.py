@@ -4,6 +4,7 @@ from .token import TokenType, Token, tokenDict, keywordDict
 # Import necessary modules and types from the ..error module, which refers to a module in the parent directory
 from ..error import IllegalCharError, SyntaxErr
 
+
 # Import the 'typing' module for type hints
 from typing import Union, List, Tuple
 
@@ -187,6 +188,52 @@ class Lexer:
                 self._curLine,
                 self._curIdx
             ))
+    # Process an identifier. Called when the lexer encounters an alphabet [a-zA-Z] or underscore (_)
+    def _getID(self) -> str:
+        identifier: str = ''
+
+        # Consume characters until a character that is not an alphabet or underscore is encountered
+        while self._curChar.isalnum() or self._curChar == '_':
+            identifier += self._curChar
+            if self._peek() == 'eof':
+                break
+            if not self._peek().isalnum() and self._peek() != '_':
+                break
+            self._advance()
+
+        return identifier
+    # Process a string. Called when the lexer encounters a double or single quote.
+    def _getString(self) -> str:
+        # Set a flag to indicate that we are inside a string
+        self._inString = True
+
+        # Store the initial position for potential error reporting
+        initialPos: Tuple[int, int] = (self._curLine, self._curIdx)
+        strn: str = ''
+
+        # Advance past the opening quote
+        self._advance()
+
+        # Accumulate characters until a matching closing quote or end of file is found
+        while self._curChar not in ["'", '"'] and self._curChar != "eof" :
+            strn += self._curChar
+            self._advance()
+
+        # If we reached the end of the program without finding a matching closing quote, mark an error
+        if self._curChar == "eof":
+            self.hadError = True
+            self._errList.append(SyntaxErr(
+                f"Unmatched Quote",
+                initialPos[0],
+                initialPos[1]
+        ))
+
+        # Advance past the closing quote and reset the string flag
+        self._advance()
+        self._inString = False
+        return strn
+
+
 
 
                     
