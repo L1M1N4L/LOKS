@@ -4,7 +4,6 @@ from .token import TokenType, Token, tokenDict, keywordDict
 # Import necessary modules and types from the ..error module, which refers to a module in the parent directory
 from ..error import IllegalCharError, SyntaxErr
 
-
 # Import the 'typing' module for type hints
 from typing import Union, List, Tuple
 
