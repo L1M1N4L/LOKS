@@ -321,7 +321,8 @@ class ArrayNode(ASTNode):
         output += ']'
         return output
         '''
-        ArrayNode represents an array in the abstract syntax tree (AST). It contains a list of elements and provides a string representation of the array's contents.
+        ArrayNode represents an array in the abstract syntax tree (AST). 
+        It contains a list of elements and provides a string representation of the array's contents.
         '''
 
 class ArrayAccessNode(ASTNode):
@@ -334,5 +335,7 @@ class ArrayAccessNode(ASTNode):
         # Create a string representation of the array access node.
         return f"(aac: {str(self.base)}[{str(self.index)}])"
         '''
-        ArrayAccessNode represents an array access operation in the abstract syntax tree (AST). It has a base node representing the array and an index node representing the accessed element's index. The string representation demonstrates the format of an array access operation.
+        ArrayAccessNode represents an array access operation in the abstract syntax tree (AST). 
+        It has a base node representing the array and an index node representing the accessed element's index. 
+        The string representation demonstrates the format of an array access operation.
         '''
