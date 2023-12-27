@@ -151,14 +151,14 @@ def main():
             # If 'requests' module is not found, write the dot file locally
             f.write(dot)
             f.close()
-            print(f"'requests' module was not installed or found. A dot file was written to {args.genASTdot}. Install the requests module with 'pip install requests', or visit https://github.com/1Hibiki1/locks-py#visualizing-the-ast for more information.")
+            print(f"'requests' module was not installed or found. A dot file was written to {args.genASTdot}. Install the requests module with 'pip install requests', or visit https://github.com/L1M1N4L for more information.")
             input("\nPress Enter to continue...")
             return -1
         except Exception as e:
             # Handle unexpected errors during 'requests' module import
             f.write(dot)
             f.close()
-            print(f"An unexpected error occurred when importing the 'requests' module. A dot file was written to {args.genASTdot}. For more information, visit https://github.com/1Hibiki1/locks-py#visualizing-the-ast.")
+            print(f"An unexpected error occurred when importing the 'requests' module. A dot file was written to {args.genASTdot}. For more information, visit  https://github.com/L1M1N4L.")
             print(f"Error: {e}")
             input("\nPress Enter to continue...")
             return -1
@@ -179,7 +179,7 @@ def main():
             r = requests.get(f'https://quickchart.io/graphviz?&graph={requests.utils.quote(dot)}', timeout=15)
         except (requests.ConnectionError, requests.Timeout):
             # Handle connection or timeout errors during the request
-            print(f"Unable to render {args.genASTdot}. Either there is no internet connection, or the generated dot file was too large (> 2048 characters). Visit https://github.com/1Hibiki1/locks-py#visualizing-the-ast for more information about how to render the generated dot file.\n")
+            print(f"Unable to render {args.genASTdot}. Either there is no internet connection, or the generated dot file was too large (> 2048 characters). Visit  https://github.com/L1M1N4L for more information about how to render the generated dot file.\n")
             input("\nPress Enter to continue...")
             return -1
 
@@ -192,12 +192,12 @@ def main():
             import cairosvg
         except ModuleNotFoundError:
             # Handle the case where 'cairosvg' module is not found
-            print(f"'cairosvg' module was not installed or found. An SVG file was written to {os.path.dirname(args.genASTdot)}/{os.path.basename(args.genASTdot)}.svg. You can open this SVG file to view the image generated from the AST. For more information, visit https://github.com/1Hibiki1/locks-py#visualizing-the-ast.")
+            print(f"'cairosvg' module was not installed or found. An SVG file was written to {os.path.dirname(args.genASTdot)}/{os.path.basename(args.genASTdot)}.svg. You can open this SVG file to view the image generated from the AST. For more information, visit  https://github.com/L1M1N4L.")
             input("\nPress Enter to continue...")
             return -1
         except Exception as e:
             # Handle unexpected errors during 'cairosvg' module import
-            print(f"An unexpected error occurred when importing the 'cairosvg' module. An SVG file was written to {os.path.dirname(args.genASTdot)}/{os.path.basename(args.genASTdot)}.svg. You can open this SVG file to view the image generated from the AST. For more information, visit https://github.com/1Hibiki1/locks-py#visualizing-the-ast.")
+            print(f"An unexpected error occurred when importing the 'cairosvg' module. An SVG file was written to {os.path.dirname(args.genASTdot)}/{os.path.basename(args.genASTdot)}.svg. You can open this SVG file to view the image generated from the AST. For more information, visit  https://github.com/L1M1N4L.")
             print(f"Error: {e}")
             input("\nPress Enter to continue...")
             return -1
@@ -211,7 +211,7 @@ def main():
             )
         except Exception as e:
             # Handle unexpected errors during SVG to PNG conversion
-            print(f"An unexpected error occurred while converting {args.genASTdot} to SVG. Visit https://github.com/1Hibiki1/locks-py#visualizing-the-ast for more information about how to render the generated dot file. If the dot file doesn't render correctly, open an issue.\n")
+            print(f"An unexpected error occurred while converting {args.genASTdot} to SVG. Visit  https://github.com/L1M1N4L for more information about how to render the generated dot file. If the dot file doesn't render correctly, open an issue.\n")
             print(f"Error: {e}")
             input("\nPress Enter to continue...")
             return -1
@@ -222,12 +222,12 @@ def main():
             from PIL import Image, ImageTk
         except ModuleNotFoundError:
             # Handle the case where 'Pillow' module is not found
-            print(f"'Pillow' module was not installed or found. A PNG file was written to {os.path.dirname(args.genASTdot)}/{os.path.basename(args.genASTdot)}.png. You can open this PNG file to view the image generated from the AST. For more information, visit https://github.com/1Hibiki1/locks-py#visualizing-the-ast.")
+            print(f"'Pillow' module was not installed or found. A PNG file was written to {os.path.dirname(args.genASTdot)}/{os.path.basename(args.genASTdot)}.png. You can open this PNG file to view the image generated from the AST. For more information, visit  https://github.com/L1M1N4L.")
             input("\nPress Enter to continue...")
             return -1
         except Exception as e:
             # Handle unexpected errors during 'Pillow' module import
-            print(f"An unexpected error occurred when importing the 'Pillow' module. A PNG file was written to {os.path.dirname(args.genASTdot)}/{os.path.basename(args.genASTdot)}.png. You can open this PNG file to view the image generated from the AST. For more information, visit https://github.com/1Hibiki1/locks-py#visualizing-the-ast.")
+            print(f"An unexpected error occurred when importing the 'Pillow' module. A PNG file was written to {os.path.dirname(args.genASTdot)}/{os.path.basename(args.genASTdot)}.png. You can open this PNG file to view the image generated from the AST. For more information, visit  https://github.com/L1M1N4L.")
             print(f"Error: {e}")
             input("\nPress Enter to continue...")
             return -1
@@ -328,7 +328,7 @@ def main():
 
             return -1
         except:
-            print("The interpreter crashed! Check the Known Bugs sections in the Locks github repository (https://github.com/1Hibiki1/locks-py) or open an issue.")
+            print("The interpreter crashed! Check the Known Bugs sections in the Locks github repository (https://github.com/L1M1N4L) or open an issue.")
             return -1
 
         # Check if debug mode is not enabled
