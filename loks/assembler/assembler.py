@@ -93,7 +93,7 @@ class Assembler:
         while '' in self._inpCodeList:
             self._inpCodeList.remove('')
 
-        # Add magic number for Locks VM
+        # Add magic number for Loks VM
         self._emit(0x4d, 0x69, 0x68, 0x6f)
 
     #
