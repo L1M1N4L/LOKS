@@ -8,7 +8,7 @@ from .stack.frame import Frame
 from .stack.stack import Stack
 
 # Importing types and standard library functions
-from ..interpreter.types import LObject, Number, Nil, Array, Boolean, String
+from ..types import LObject, Number, Nil, Array, Boolean, String
 from ..stdlib import builtinFunctionIndex, builtinFunctionTable, builtinFunctionInfo
 from ..error import TypeErr, ZeroDivErr, IndexErr, SyntaxErr
 

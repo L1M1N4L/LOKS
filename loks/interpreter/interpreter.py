@@ -5,7 +5,7 @@ from ..nodevisitor import NodeVisitor
 # LObject, Number, Nil, Array, Boolean, String, Function classes, and
 # builtinFunctionTable from their respective modules
 from .memory import CallStack, ActivationRecord, ARType
-from .types import LObject, Number, Nil, Array, Boolean, String, Function
+from ..types import LObject, Number, Nil, Array, Boolean, String, Function
 from ..stdlib import builtinFunctionTable
 
 # Importing TypeErr, ZeroDivErr, and SyntaxErr classes from the "..error" module

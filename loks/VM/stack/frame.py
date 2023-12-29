@@ -1,6 +1,6 @@
 from typing import List
 from .stack import Stack
-from ...interpreter.types import LObject, Nil
+from ...types import LObject, Nil
 
 # Class representing a frame in the interpreter's call stack
 class Frame:

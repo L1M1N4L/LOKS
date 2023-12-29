@@ -314,16 +314,16 @@ class ArrayNode(ASTNode):
 
     def __str__(self) -> str:
         # Create a string representation of the array node.
+        '''
+        ArrayNode represents an array in the abstract syntax tree (AST). 
+        It contains a list of elements and provides a string representation of the array's contents.
+        '''
         output = f"arr: ["
         for a in self.elements:
             output += str(a) + ', '
         output = output.strip()[:-1]
         output += ']'
         return output
-        '''
-        ArrayNode represents an array in the abstract syntax tree (AST). 
-        It contains a list of elements and provides a string representation of the array's contents.
-        '''
 
 class ArrayAccessNode(ASTNode):
     def __init__(self, b: ASTNode, idx: ASTNode) -> None:
@@ -332,10 +332,11 @@ class ArrayAccessNode(ASTNode):
         self.index: ASTNode = idx
 
     def __str__(self) -> str:
-        # Create a string representation of the array access node.
-        return f"(aac: {str(self.base)}[{str(self.index)}])"
         '''
         ArrayAccessNode represents an array access operation in the abstract syntax tree (AST). 
         It has a base node representing the array and an index node representing the accessed element's index. 
         The string representation demonstrates the format of an array access operation.
         '''
+        # Create a string representation of the array access node.
+        return f"(aac: {str(self.base)}[{str(self.index)}])"
+

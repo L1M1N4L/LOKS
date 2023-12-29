@@ -360,20 +360,20 @@ class Compiler(NodeVisitor):
         # Emit the BINARY_MULTIPLY instruction
         self._emit("BINARY_MULTIPLY")
 
-def visit_DivNode(self, node) -> None:
-    """
-    Visit method for DivNode in the abstract syntax tree.
+    def visit_DivNode(self, node) -> None:
+        """
+        Visit method for DivNode in the abstract syntax tree.
 
-    This method visits the left and right nodes, then emits the BINARY_DIVIDE instruction.
+        This method visits the left and right nodes, then emits the BINARY_DIVIDE instruction.
 
-    :param node: DivNode instance representing a division operation.
-    :return: None
-    """
-    # Visit the left and right nodes
-    self.visit(node.left)
-    self.visit(node.right)
-    # Emit the BINARY_DIVIDE instruction
-    self._emit("BINARY_DIVIDE")
+        :param node: DivNode instance representing a division operation.
+        :return: None
+        """
+        # Visit the left and right nodes
+        self.visit(node.left)
+        self.visit(node.right)
+        # Emit the BINARY_DIVIDE instruction
+        self._emit("BINARY_DIVIDE")
 
 
     def visit_ModNode(self, node) -> None:
