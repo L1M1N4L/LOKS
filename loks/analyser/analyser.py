@@ -17,7 +17,7 @@ from .symboltable import SymbolTable
 from .symboltable import TypeSymbol, VariableSymbol, FunctionSymbol
 
 # SemanticAnalyzer class performs static analysis, checks for defined names, and minimal type checking
-# Inherits from the NodeVisitor class, which is defined in locks/nodevisitor.py
+# Inherits from the NodeVisitor class, which is defined in loks/nodevisitor.py
 class SemanticAnalyzer(NodeVisitor):
     def __init__(self) -> None:
         """
