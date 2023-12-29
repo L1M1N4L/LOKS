@@ -29,7 +29,7 @@ def main():
         description="loks-py: the loks interpreter"
     )
 
-    # Define a required positional argument for the path to a loks file
+    # Define a required positional argument for the path to a locks file
     argParser.add_argument(
         'path',
         metavar='path',

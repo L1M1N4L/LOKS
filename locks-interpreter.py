@@ -5,13 +5,13 @@ import os  # Miscellaneous operating system interfaces
 import tkinter as tk  # Python's standard GUI (Graphical User Interface) package
 from time import time  # Time-related functions
 
-# Import modules from the locks package
+# Import modules from the loks package
 from loks.lexerOrScanner.lexer import Lexer  # Lexer for tokenizing source code
 from loks.parser.parser import Parser  # Parser for creating an Abstract Syntax Tree (AST)
 from loks.analyser.analyser import SemanticAnalyzer  # Semantic analyzer for checking semantic errors
-from loks.interpreter.interpreter import Interpreter  # Interpreter for executing Locks programming language code
+from loks.interpreter.interpreter import Interpreter  # Interpreter for executing Loks programming language code
 
-from loks.compiler.compiler import Compiler  # Compiler for translating Locks code to bytecode
+from loks.compiler.compiler import Compiler  # Compiler for translating Loks code to bytecode
 from loks.assembler.assembler import Assembler  # Assembler for converting bytecode to machine code
 from loks.vm.vm import VirtualMachine  # Virtual Machine for executing machine code
 
@@ -26,15 +26,15 @@ import argparse
 def main():
     # Setup CLI by creating an ArgumentParser object with a program description
     argParser = argparse.ArgumentParser(
-        description="locks-py: the locks interpreter"
+        description="loks-py: the loks interpreter"
     )
 
-    # Define a required positional argument for the path to a locks file
+    # Define a required positional argument for the path to a loks file
     argParser.add_argument(
         'path',
         metavar='path',
         type=str,
-        help='path to a locks(.lks) file'
+        help='path to a loks(.lks) file'
     )
 
     # Define an optional argument for enabling debugging mode
@@ -42,7 +42,7 @@ def main():
         '-d',
         '--debug',
         action='store_true',
-        help='Use the tree walk interpreter instead of the locks VM to execute code.',
+        help='Use the tree walk interpreter instead of the loks VM to execute code.',
     )
 
     # Define an optional argument for specifying an output file for bytecode
@@ -328,7 +328,7 @@ def main():
 
             return -1
         except:
-            print("The interpreter crashed! Check the Known Bugs sections in the Locks github repository (https://github.com/L1M1N4L) or open an issue.")
+            print("The interpreter crashed! Check the Known Bugs sections in the Loks github repository (https://github.com/L1M1N4L) or open an issue.")
             return -1
 
         # Check if debug mode is not enabled
