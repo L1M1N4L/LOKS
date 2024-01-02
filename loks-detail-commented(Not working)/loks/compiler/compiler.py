@@ -668,7 +668,7 @@ class Compiler(NodeVisitor):
         """
         Visit method for IfNode in the abstract syntax tree.
 
-        This method processes an if statement, including any elsif and else blocks.
+        This method processes an if statement, including any elsif and else bloks.
         It generates labels for the end of the if statement and skips to the appropriate block based on the condition.
 
         :param node: IfNode instance representing the if statement.
@@ -686,7 +686,7 @@ class Compiler(NodeVisitor):
         self._emit(f"GOTO {endifLabl}")
         self._emit(f".{skipIfLabl}")
         
-        #  Visit each elsif block and emit jumps to the endif label and labels to skip the elsif blocks
+        #  Visit each elsif block and emit jumps to the endif label and labels to skip the elsif bloks
         for cs in node.elsifBloks:
             skipElsifLabl: str = self.visit_ConditionalNode(cs, startLabl, endLabl)
             self._emit(f"GOTO {endifLabl}")

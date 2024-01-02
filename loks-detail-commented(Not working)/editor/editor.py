@@ -585,7 +585,7 @@ class Editor:
         name =  tk.filedialog.askopenfilename(
             initialdir = os.getcwd(), 
             title = "Select file",
-            filetypes = (("Locks files", "*.lks"), ("All files", "*.*"))
+            filetypes = (("loks files", "*.lks"), ("All files", "*.*"))
         )
         if name == '':
             return
@@ -602,8 +602,8 @@ class Editor:
         f =  tk.filedialog.asksaveasfile(
             mode = 'w', 
             title = "Select file",
-            filetypes = [("Locks File (*.lks)", "*.lks"), ("Text File (*.txt)", "*.txt")],
-            defaultextension = ("Locks File (*.lks)", "*.lks")
+            filetypes = [("loks File (*.lks)", "*.lks"), ("Text File (*.txt)", "*.txt")],
+            defaultextension = ("loks File (*.lks)", "*.lks")
         )
 
         if f == None:
@@ -637,9 +637,9 @@ class Editor:
                 self._saveFile()
 
         if platform.system() == "Windows":
-            subprocess.Popen(f'{self._preferences["pyinterp"]} "{os.getcwd().replace(os.sep, "/")}/locks-interpreter.py" "{self._curOpenFile}"', creationflags=subprocess.CREATE_NEW_CONSOLE)
+            subprocess.Popen(f'{self._preferences["pyinterp"]} "{os.getcwd().replace(os.sep, "/")}/loks-interpreter.py" "{self._curOpenFile}"', creationflags=subprocess.CREATE_NEW_CONSOLE)
         else:
-            subprocess.Popen(f'{self._preferences["pyinterp"]} "{os.getcwd().replace(os.sep, "/")}/locks-interpreter.py" "{self._curOpenFile}"', shell=True)
+            subprocess.Popen(f'{self._preferences["pyinterp"]} "{os.getcwd().replace(os.sep, "/")}/loks-interpreter.py" "{self._curOpenFile}"', shell=True)
 
     def _runDebug(self, e=None) -> None:
         if self._curOpenFile == "untitled":
@@ -651,9 +651,9 @@ class Editor:
                 self._saveFile()
 
         if platform.system() == "Windows":
-            subprocess.Popen(f'{self._preferences["pyinterp"]} "{os.getcwd().replace(os.sep, "/")}/locks-interpreter.py" "{self._curOpenFile}" -d', creationflags=subprocess.CREATE_NEW_CONSOLE)
+            subprocess.Popen(f'{self._preferences["pyinterp"]} "{os.getcwd().replace(os.sep, "/")}/loks-interpreter.py" "{self._curOpenFile}" -d', creationflags=subprocess.CREATE_NEW_CONSOLE)
         else:
-            subprocess.Popen(f'{self._preferences["pyinterp"]} "{os.getcwd().replace(os.sep, "/")}/locks-interpreter.py" "{self._curOpenFile}" -d', shell=True)
+            subprocess.Popen(f'{self._preferences["pyinterp"]} "{os.getcwd().replace(os.sep, "/")}/loks-interpreter.py" "{self._curOpenFile}" -d', shell=True)
 
     def _visualize(self, e=None) -> None:
         if self._curOpenFile == "untitled":
@@ -668,11 +668,11 @@ class Editor:
             if "visualize" not in list(os.walk(f"{os.getcwd().replace(os.sep, '/')}"))[0][1]:
                 os.mkdir(f"{os.getcwd().replace(os.sep, '/')}/visualize")
         except:
-            messagebox.showerror("Error", f"The 'visualize' folder does not exist in the current directory, and Locks was unable to create it. Try adding a 'visualize' directory to current directory manually, and try again.")
+            messagebox.showerror("Error", f"The 'visualize' folder does not exist in the current directory, and loks was unable to create it. Try adding a 'visualize' directory to current directory manually, and try again.")
             return
 
         if platform.system() == "Windows":
-            subprocess.Popen(f'{self._preferences["pyinterp"]} "{os.getcwd().replace(os.sep, "/")}/locks-interpreter.py" "{self._curOpenFile}" -g "{os.getcwd().replace(os.sep, "/")}/visualize/{os.path.basename(self._curOpenFile)}"', creationflags=subprocess.CREATE_NEW_CONSOLE)
+            subprocess.Popen(f'{self._preferences["pyinterp"]} "{os.getcwd().replace(os.sep, "/")}/loks-interpreter.py" "{self._curOpenFile}" -g "{os.getcwd().replace(os.sep, "/")}/visualize/{os.path.basename(self._curOpenFile)}"', creationflags=subprocess.CREATE_NEW_CONSOLE)
         else:
-            subprocess.Popen(f'{self._preferences["pyinterp"]} "{os.getcwd().replace(os.sep, "/")}/locks-interpreter.py" "{self._curOpenFile}" -g "{os.getcwd().replace(os.sep, "/")}/visualize/{os.path.basename(self._curOpenFile)}"', shell=True)
+            subprocess.Popen(f'{self._preferences["pyinterp"]} "{os.getcwd().replace(os.sep, "/")}/loks-interpreter.py" "{self._curOpenFile}" -g "{os.getcwd().replace(os.sep, "/")}/visualize/{os.path.basename(self._curOpenFile)}"', shell=True)
 

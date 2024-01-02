@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Any, List
 
 #
-# Locks tokens
+# loks tokens
 #  To add a keyword, add an entry at the end of the Enum
 #
 class TokenType(Enum):

@@ -709,7 +709,7 @@ class Interpeter(NodeVisitor):
         # """
         # Visit method for IfNode in the abstract syntax tree.
 
-        # This method evaluates an if statement, including any elsif and else blocks.
+        # This method evaluates an if statement, including any elsif and else bloks.
 
         # :return: True if any if or elsif block is executed, False if all conditions are falsy and there is no else block.
         #          Returns the result of the executed block if a return statement is encountered.
@@ -719,7 +719,7 @@ class Interpeter(NodeVisitor):
 
         # Check if the if block is executed
         if not res:
-            # Evaluate any elsif blocks
+            # Evaluate any elsif bloks
             for b in node.elsifBloks:
                 res = self.visit(b)
                 # Break if an elsif block is executed
@@ -729,7 +729,7 @@ class Interpeter(NodeVisitor):
                 # Return the result if a return statement is encountered
                 if bool(res):
                     return res
-        # If no blocks are executed and there is an else block, evaluate it
+        # If no bloks are executed and there is an else block, evaluate it
         if not res and node.elseBlock:
             res = self.visit(node.elseBlock)
 

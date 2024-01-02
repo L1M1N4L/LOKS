@@ -7,7 +7,7 @@ from typing import Union, List, Tuple
 #
 # LEXER
 # Takes a string and returns a list of tokens.
-# The Token class and list of Locks tokens are defined in token.py
+# The Token class and list of loks tokens are defined in token.py
 #
 class Lexer:
     # accepts a string (loks program) tat is to be split into tokens
