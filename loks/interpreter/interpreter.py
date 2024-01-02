@@ -405,7 +405,10 @@ class Interpeter(NodeVisitor):
             raise TypeErr(f"Invalid operand type for greater than operator: {self._getObjType(l)} and {self._getObjType(r)}", node.left.token.line)
 
         # Perform the comparison and return a Boolean object
-        return Boolean("true") if l.value > r.value else Boolean("false")
+        if l.value > r.value:
+            return Boolean("true")
+
+        return Boolean("false")
 
 
     def visit_GreaterThanEqualNode(self, node) -> Boolean:
@@ -425,7 +428,11 @@ class Interpeter(NodeVisitor):
             raise TypeErr(f"Invalid operand type for greater than equals operator: {self._getObjType(l)} and {self._getObjType(r)}", node.left.token.line)
 
         # Perform the comparison and return a Boolean object
-        return Boolean("true") if l.value >= r.value else Boolean("false")
+        if l.value >= r.value:
+            return Boolean("true")
+
+        return Boolean("false")
+
 
     def visit_LessThanNode(self, node) -> Boolean:
         """
@@ -444,7 +451,10 @@ class Interpeter(NodeVisitor):
             raise TypeErr(f"Invalid operand type for less than operator: {self._getObjType(l)} and {self._getObjType(r)}", node.left.token.line)
 
         # Perform the comparison and return a Boolean object
-        return Boolean("true") if l.value < r.value else Boolean("false")
+        if l.value < r.value:
+            return Boolean("true")
+
+        return Boolean("false")
 
 
     def visit_LessThanEqualNode(self, node) -> Boolean:
@@ -464,7 +474,10 @@ class Interpeter(NodeVisitor):
             raise TypeErr(f"Invalid operand type for less than equals operator: {self._getObjType(l)} and {self._getObjType(r)}", node.left.token.line)
 
         # Perform the comparison and return a Boolean object
-        return Boolean("true") if l.value <= r.value else Boolean("false")
+        if l.value <= r.value:
+            return Boolean("true")
+
+        return Boolean("false")
     
     def visit_EqualNode(self, node) -> Boolean:
         """
@@ -596,7 +609,7 @@ class Interpeter(NodeVisitor):
                 return "break"
 
             # Return a non-nil value if a return statement is encountered
-            if v is not None and str(v) != "nil":
+            if v != None and str(v) != "nil":
                 return v
 
             # Continue iterating through the block

@@ -379,7 +379,7 @@ class Parser:
         self._consume(TokenType.SEMI)
 
         # Create an AssignNode representing the assignment statement.
-        if aac is not None:
+        if aac != None:
             return AssignNode(aac, exprNode)
         return AssignNode(IdentifierNode(id), exprNode)
 
@@ -610,14 +610,14 @@ class Parser:
         stmtlist: List[ASTNode] = []
 
         # If there was a first statement (declaration or assignment), add it to the list of statements.
-        if decl is not None:
+        if decl != None:
             stmtlist.append(decl)
 
         # Parse the statement block associated with the 'for' loop.
         blk: ASTNode = self._statement()
 
         # If there's a third statement (loop update), add it to the statement block.
-        if update is not None:
+        if update != None:
             # Check if the statement block is a BlockNode; if it is, append the update statement.
             if isinstance(blk, BlockNode):
                 blk.stmtList.append(update)
@@ -629,7 +629,7 @@ class Parser:
         w: WhileNode = None
 
         # Check if there is a loop condition (second statement inside the 'for' loop parentheses).
-        if cond is not None:
+        if cond != None:
             w = WhileNode(cond, blk)
         else:
             # If there is no condition, create a 'while' loop with a true condition (infinite loop).

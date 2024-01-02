@@ -2,9 +2,9 @@
 from typing import List, Union, Dict
 
 # Importing Custom Modules
-from ..parser.abstractSyntaxTree import ASTNode  # Importing ASTNode class from the parser.ast module
-from ..nodevisitor import NodeVisitor  # Importing NodeVisitor class from the nodevisitor module
-from ..stdlib import builtinFunctionInfo  # Importing builtinFunctionInfo from the stdlib module
+from ..parser.ast import ASTNode # Importing ASTNode class from the parser.ast module
+from ..nodevisitor import NodeVisitor # Importing NodeVisitor class from the nodevisitor module
+from ..stdlib import builtinFunctionInfo # Importing builtinFunctionInfo from the stdlib module
 
 
 class Compiler(NodeVisitor):
@@ -25,7 +25,9 @@ class Compiler(NodeVisitor):
         self._constantPool: List[str] = []
 
         # Initialize a dictionary to store functions with "main" as the default entry
-        self._functions: Dict[str, str] = {"main": ""}
+        self._functions: Dict[str] = {
+            "main": ""
+        }
 
         # Set the current function to "main"
         self._currentFn: str = "main"
@@ -50,14 +52,14 @@ class Compiler(NodeVisitor):
         """
         # Initialize a string to represent the constant pool section
         cpStr: str = f"cpc {len(self._constantPool)}\n"
-        
+
         # Append each constant pool value to the string
         for s in self._constantPool:
             cpStr += s + '\n'
 
-        # Initialize the output string with the constant pool section
+        # Initialize the output string with the constant pool section    
         output: str = cpStr + '\n'  
-
+        
         # Append the "END" to the main function
         self._functions["main"] += "    END"
 
@@ -136,6 +138,7 @@ class Compiler(NodeVisitor):
         for d in node.declarationList:
             self.visit(d)
 
+
     def visit_NumberNode(self, node) -> None:
         """
         Visit method for NumberNode in the abstract syntax tree.
@@ -152,7 +155,7 @@ class Compiler(NodeVisitor):
             # Add the float constant to the constant pool
             self._addConstant(f"d {v}")
             # Emit the corresponding LOAD_CONST instruction
-            self._emit(f"LOAD_CONST {len(self._constantPool) - 1}")
+            self._emit(f"LOAD_CONST {len(self._constantPool)-1}")
             return
 
         # Check if the number is a small integer (fits in one byte)
@@ -163,7 +166,8 @@ class Compiler(NodeVisitor):
             # Add the integer constant to the constant pool
             self._addConstant(f"i {v}")
             # Emit the corresponding LOAD_CONST instruction
-            self._emit(f"LOAD_CONST {len(self._constantPool) - 1}")
+            self._emit(f"LOAD_CONST {len(self._constantPool)-1}")
+
 
     def visit_StringNode(self, node) -> None:
         """
@@ -178,7 +182,7 @@ class Compiler(NodeVisitor):
         # Add the string constant to the constant pool
         self._addConstant(f's "{node.token.value}"')
         # Emit the corresponding LOAD_CONST instruction
-        self._emit(f"LOAD_CONST {len(self._constantPool) - 1}")
+        self._emit(f"LOAD_CONST {len(self._constantPool)-1}")
 
 
     def visit_NilNode(self, node) -> None:
@@ -206,6 +210,7 @@ class Compiler(NodeVisitor):
         # Emit the LOAD_TRUE instruction
         self._emit("LOAD_TRUE")
 
+
     def visit_FalseNode(self, node) -> None:
         """
         Visit method for FalseNode in the abstract syntax tree.
@@ -231,6 +236,7 @@ class Compiler(NodeVisitor):
         # Visit each element in the array node
         for i in node.elements:
             self.visit(i)
+
         # Emit the BUILD_LIST instruction with the length of the elements
         self._emit(f"BUILD_LIST {len(node.elements)}")
 
@@ -252,7 +258,6 @@ class Compiler(NodeVisitor):
         else:
             # Emit LOAD_LOCAL instruction
             self._emit(f"LOAD_LOCAL {node.token.value}")
-
 
 
     def visit_ArrayAccessNode(self, node) -> None:
@@ -279,7 +284,7 @@ class Compiler(NodeVisitor):
 
         :param node: NotNode instance representing a logical NOT operation.
         :return: None
-        """
+        """ 
         # Visit the child node
         self.visit(node.node)
         # Emit the UNARY_NOT instruction
@@ -290,44 +295,45 @@ class Compiler(NodeVisitor):
         """
         Visit method for NegationNode in the abstract syntax tree.
 
-        This method handles negation of numeric values, adding a negated constant to the constant pool
-        or emitting the UNARY_NEGATIVE instruction for non-numeric values.
+        This method computes the negation of a numeric value.
 
-        :param node: NegationNode instance representing a negation operation.
-        :return: None
+        :return: A Number object representing the negated value.
         """
-        # Check if the child node is a NumberNode
+        # Check if the node to be negated is a NumberNode
         if type(node.node).__name__ == "NumberNode":
-            # Check if the number is a float
+            # Check the type of the numeric value (float or integer)
             if type(node.node.token.value).__name__ == "float":
-                # Add the negated float constant to the constant pool
+                # Add a constant for a negated float value
                 self._addConstant(f"d -{node.node.token.value}")
             else:
-                # Add the negated integer constant to the constant pool
+                # Add a constant for a negated integer value
                 self._addConstant(f"i -{node.node.token.value}")
-            # Emit the corresponding LOAD_CONST instruction
-            self._emit(f"LOAD_CONST {len(self._constantPool) - 1}")
+
+            # Emit the instruction to load the constant onto the stack
+            self._emit(f"LOAD_CONST {len(self._constantPool)-1}")
         else:
-            # Visit the child node and emit UNARY_NEGATIVE for non-numeric values
+            # If the node is not a NumberNode, recursively visit the child node
             self.visit(node.node)
+
+            # Emit the instruction for unary negation
             self._emit("UNARY_NEGATIVE")
+
 
 
     def visit_AddNode(self, node) -> None:
         """
         Visit method for AddNode in the abstract syntax tree.
 
-        This method visits the left and right nodes, then emits the BINARY_ADD instruction.
+        This method computes the sum of two values.
 
-        :param node: AddNode instance representing an addition operation.
-        :return: None
+        :return: A Number object representing the sum of the left and right values, or
+                 a String object representing the concatenation of two strings.
         """
         # Visit the left and right nodes
         self.visit(node.left)
         self.visit(node.right)
         # Emit the BINARY_ADD instruction
         self._emit("BINARY_ADD")
-
 
     def visit_SubNode(self, node) -> None:
         """
@@ -343,7 +349,6 @@ class Compiler(NodeVisitor):
         self.visit(node.right)
         # Emit the BINARY_SUBTRACT instruction
         self._emit("BINARY_SUBTRACT")
-
 
     def visit_MulNode(self, node) -> None:
         """
@@ -375,7 +380,6 @@ class Compiler(NodeVisitor):
         # Emit the BINARY_DIVIDE instruction
         self._emit("BINARY_DIVIDE")
 
-
     def visit_ModNode(self, node) -> None:
         """
         Visit method for ModNode in the abstract syntax tree.
@@ -391,6 +395,7 @@ class Compiler(NodeVisitor):
         # Emit the BINARY_MODULO instruction
         self._emit("BINARY_MODULO")
 
+
     def visit_VarDeclNode(self, node) -> None:
         """
         Visit method for VarDeclNode in the abstract syntax tree.
@@ -404,7 +409,7 @@ class Compiler(NodeVisitor):
         :return: None
         """
         # Visit the expression node if present, otherwise emit LOAD_NIL
-        if node.exprNode is not None:
+        if node.exprNode != None:
             self.visit(node.exprNode)
         else:
             self._emit("LOAD_NIL")
@@ -414,7 +419,7 @@ class Compiler(NodeVisitor):
             # Add the variable to the global variable list
             self._globalVars.append(node.id.token.value)
 
-        # Emit the STORE_LOCAL instruction to store the result in the local variable
+         # Emit the STORE_LOCAL instruction to store the result in the local variable
         self._emit(f"STORE_LOCAL {node.id.token.value}")
 
 
@@ -431,12 +436,14 @@ class Compiler(NodeVisitor):
         :param node: AssignNode instance representing an assignment operation.
         :return: None
         """
+
         # Visit the expression node
         self.visit(node.exprNode)
 
         # Check the type of the left-hand side (lvalue)
         if type(node.lvalue).__name__ == "IdentifierNode":
             n: str = node.lvalue.token.value
+
             # Check if the identifier is in the global variable list
             if n in self._globalVars:
                 # Emit STORE_GLOBAL instruction
@@ -475,7 +482,7 @@ class Compiler(NodeVisitor):
                 # Emit GOTO instruction to jump to the end label
                 self._emit(f"GOTO {endLabl}")
                 continue
-
+            
             if type(s).__name__ == "IfNode":
                 # Call the visit_IfNode method for IfNode
                 self.visit_IfNode(s, startLabl, endLabl)
@@ -499,7 +506,6 @@ class Compiler(NodeVisitor):
         # Emit the CMPEQ instruction
         self._emit("CMPEQ")
 
-
     def visit_NotEqualNode(self, node) -> None:
         """
         Visit method for NotEqualNode in the abstract syntax tree.
@@ -514,7 +520,6 @@ class Compiler(NodeVisitor):
         self.visit(node.right)
         # Emit the CMPNE instruction
         self._emit("CMPNE")
-
 
     def visit_GreaterThanNode(self, node) -> None:
         """
@@ -546,7 +551,6 @@ class Compiler(NodeVisitor):
         # Emit the CMPLT instruction
         self._emit("CMPLT")
 
-
     def visit_GreaterThanEqualNode(self, node) -> None:
         """
         Visit method for GreaterThanEqualNode in the abstract syntax tree.
@@ -562,7 +566,6 @@ class Compiler(NodeVisitor):
         # Emit the CMPGE instruction
         self._emit("CMPGE")
 
-
     def visit_LessThanEqualNode(self, node) -> None:
         """
         Visit method for LessThanEqualNode in the abstract syntax tree.
@@ -575,11 +578,11 @@ class Compiler(NodeVisitor):
         # Visit the left and right nodes
         self.visit(node.left)
         self.visit(node.right)
+
         # Emit the CMPLE instruction
         self._emit("CMPLE")
 
-
-    def visit_AndNode(self, node) -> None:
+    def visit_AndNode(self, node) -> str:
         """
         Visit method for AndNode in the abstract syntax tree.
 
@@ -591,10 +594,11 @@ class Compiler(NodeVisitor):
         # Visit the left and right nodes
         self.visit(node.left)
         self.visit(node.right)
+
         # Emit the BINARY_AND instruction
         self._emit("BINARY_AND")
 
-    def visit_OrNode(self, node) -> None:
+    def visit_OrNode(self, node) -> str:
         """
         Visit method for OrNode in the abstract syntax tree.
 
@@ -609,7 +613,8 @@ class Compiler(NodeVisitor):
         # Emit the BINARY_OR instruction
         self._emit("BINARY_OR")
 
-    def visit_ConditionalNode(self, node, startLabl: str = None, endLabl: str = None) -> None:
+
+    def visit_ConditionalNode(self, node, startLabl: str = None, endLabl: str = None) -> str:
         """
         Visit method for ConditionalNode in the abstract syntax tree.
 
@@ -622,35 +627,41 @@ class Compiler(NodeVisitor):
         :return: None
         """
         # Generate a unique label for the next block
-        nextLabel: str = self._generateLabel()
+        next: str = self._generateLabel()
 
-        # Visit the condition node and get the result
-        conditionResult = self.visit(node.condition)
+         # Visit the condition node and get the result
+        n = self.visit(node.condition)
 
         # If the condition is falsy, emit a conditional jump instruction
-        if not conditionResult:
-            self._emit(f"POP_JMP_IF_FALSE {nextLabel}")
+        if not n:
+            self._emit(f"POP_JMP_IF_FALSE {next}")
 
         # Handle special cases for ContinueNode, BreakNode, and BlockNode
         if type(node.statement).__name__ == "ContinueNode":
             # Ensure that startLabl is provided for ContinueNode
-            assert startLabl is not None
+            assert startLabl != None
             # Emit a jump to the start label
             self._emit(f"GOTO {startLabl}")
+
         elif type(node.statement).__name__ == "BreakNode":
             # Ensure that endLabl is provided for BreakNode
-            assert endLabl is not None
+            assert endLabl != None
             # Emit a jump to the end label
             self._emit(f"GOTO {endLabl}")
+
         elif type(node.statement).__name__ == "BlockNode":
             # Visit the BlockNode with optional startLabl and endLabl
             self.visit_BlockNode(node.statement, startLabl, endLabl)
+
         else:
             # Visit other types of statements
             self.visit(node.statement)
 
         # If the condition is truthy, return the result, otherwise return the next label
-        return conditionResult if conditionResult else nextLabel
+        if n:
+            return n
+
+        return next
 
 
     def visit_IfNode(self, node, startLabl: str = None, endLabl: str = None) -> None:
@@ -665,40 +676,43 @@ class Compiler(NodeVisitor):
         :param endLabl: Optional label for the end of the block (used in BreakNode and BlockNode).
         :return: None
         """
+
         # Generate a unique label for the end of the if statement
-        endifLabel: str = self._generateLabel()
+        endifLabl: str = self._generateLabel()
 
-        # Visit the if block and get the label to skip if the condition is falsy
-        skipIfLabel: str = self.visit_ConditionalNode(node.ifBlock, startLabl, endLabl)
+        #it the if block and get the label to skip if the condition is falsy
+        skipIfLabl: str = self.visit_ConditionalNode(node.ifBlock, startLabl, endLabl)
+         # Emit a jump to the endif label and the label to skip the if block
+        self._emit(f"GOTO {endifLabl}")
+        self._emit(f".{skipIfLabl}")
+        
+        #  Visit each elsif block and emit jumps to the endif label and labels to skip the elsif blocks
+        for cs in node.elsifBloks:
+            skipElsifLabl: str = self.visit_ConditionalNode(cs, startLabl, endLabl)
+            self._emit(f"GOTO {endifLabl}")
+            self._emit(f".{skipElsifLabl}")
 
-        # Emit a jump to the endif label and the label to skip the if block
-        self._emit(f"GOTO {endifLabel}")
-        self._emit(f".{skipIfLabel}")
-
-        # Visit each elsif block and emit jumps to the endif label and labels to skip the elsif blocks
-        for elsifBlock in node.elsifBlocks:
-            skipElsifLabel: str = self.visit_ConditionalNode(elsifBlock, startLabl, endLabl)
-            self._emit(f"GOTO {endifLabel}")
-            self._emit(f".{skipElsifLabel}")
-
+        
         # Visit the else block if present
         if node.elseBlock:
             # Handle special cases for ContinueNode, BreakNode, and BlockNode in the else block
             if type(node.elseBlock).__name__ == "ContinueNode":
-                assert startLabl is not None
+                assert startLabl != None
                 self._emit(f"GOTO {startLabl}")
+
             elif type(node.elseBlock).__name__ == "BreakNode":
-                assert endLabl is not None
+                assert startLabl != None
                 self._emit(f"GOTO {endLabl}")
+             # Visit the BlockNode with optional startLabl and endLabl
             elif type(node.elseBlock).__name__ == "BlockNode":
-                # Visit the BlockNode with optional startLabl and endLabl
                 self.visit_BlockNode(node.elseBlock, startLabl, endLabl)
+
             else:
-                # Visit other types of statements in the else block
+                #Visit other types of statements in the else block
                 self.visit(node.elseBlock)
 
         # Emit the label for the end of the if statement
-        self._emit(f".{endifLabel}")
+        self._emit(f".{endifLabl}")
 
 
     def visit_WhileNode(self, node) -> None:
@@ -712,27 +726,28 @@ class Compiler(NodeVisitor):
         :return: None
         """
         # Generate unique labels for the while loop and its end
-        loopLabel: str = self._generateLabel()
-        endLoopLabel: str = self._generateLabel()
+        loop: str = self._generateLabel()
+        endLoop: str = self._generateLabel()
 
         # Emit the label for the start of the while loop
-        self._emit(f".{loopLabel}")
+        self._emit(f".{loop}")
 
-        # Visit the condition node and emit a conditional jump instruction
+         # Visit the condition node and emit a conditional jump instruction
         self.visit(node.condition)
-        self._emit(f"POP_JMP_IF_FALSE {endLoopLabel}")
+        self._emit(f"POP_JMP_IF_FALSE {endLoop}")
 
         # Visit the loop body, handling special cases for BlockNode and IfNode
         if type(node.statement).__name__ in ["BlockNode", "IfNode"]:
-            self.visit_BlockNode(node.statement, loopLabel, endLoopLabel)
+            self.visit_BlockNode(node.statement, loop, endLoop)
         else:
             self.visit(node.statement)
 
-        # Emit a jump back to the start of the while loop
-        self._emit(f"GOTO {loopLabel}")
+        #Emit a jump back to the start of the while loop
+        self._emit(f"GOTO {loop}")
 
         # Emit the label for the end of the while loop
-        self._emit(f".{endLoopLabel}")
+        self._emit(f".{endLoop}")
+
 
     def visit_ReturnNode(self, node) -> None:
         """
@@ -766,20 +781,20 @@ class Compiler(NodeVisitor):
         # Initialize the function signature in the functions dictionary
         self._functions[self._currentFn] = f"fn {self._currentFn}\nargc {len(node.paramList)}\n"
 
-        # Visit parameter nodes and emit STORE_LOCAL instructions
-        for param in node.paramList:
-            self._emit(f"STORE_LOCAL {param.value}")
+         # Visit parameter nodes and emit STORE_LOCAL instructions
+        for a in node.paramList:
+            self._emit(f"STORE_LOCAL {a.value}")
 
         # Visit the block node of the function
         self.visit(node.blockNode)
-
+        
         # If there is no explicit return statement in the function, emit a default RETURN_VALUE instruction
         if "RETURN_VALUE" not in self._functions[self._currentFn]:
             self._emit("LOAD_NIL")
             self._emit("RETURN_VALUE")
-
         # Restore the original current function name
         self._currentFn = oldFn
+
 
     def visit_FunctionCallNode(self, node) -> None:
         """
@@ -792,14 +807,15 @@ class Compiler(NodeVisitor):
         :return: None
         """
         # Visit argument nodes in the function call
-        for arg in node.argList:
-            self.visit(arg)
+        for a in node.argList:
+            self.visit(a)
 
         # Check if the function is a built-in function
         if str(node.nameNode) in builtinFunctionInfo:
-            # Emit CALL_NATIVE instruction for built-in functions
+             # Emit CALL_NATIVE instruction for built-in functions
             self._emit(f"CALL_NATIVE {builtinFunctionInfo[node.nameNode.token.value][0]}")
             return
 
         # Emit CALL_FUNCTION instruction for user-defined functions
         self._emit(f"CALL_FUNCTION {node.nameNode.token.value}")
+        

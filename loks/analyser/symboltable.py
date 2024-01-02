@@ -18,7 +18,7 @@ class Symbol:
 
         :return: String representation of the symbol.
         """
-        if self.type is not None:
+        if self.type != None:
             return f"<{self.type}:{self.name}>"
         return f"<{self.name}>"
 
@@ -109,11 +109,11 @@ class SymbolTable:
             return self._table.get(s)
 
         # If the symbol is found in the current table, return it
-        if self._table.get(s) is not None:
+        if self._table.get(s) != None:
             return self._table.get(s)
 
         # If the current table does not contain the symbol and there is an enclosing table
-        if self._enclosingTable is not None:
+        if self._enclosingTable != None:
             # Recursively search in the enclosing table
             return self._enclosingTable.get(s)
 

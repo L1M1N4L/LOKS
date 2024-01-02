@@ -8,7 +8,7 @@ from ..nodevisitor import NodeVisitor
 from ..error import NameErr, TypeErr, SyntaxErr
 
 # Importing the Token and TokenType classes for lexical analysis
-from ..lexerOrScanner.token import Token, TokenType
+from ..lexer.token import Token, TokenType
 
 # Importing the SymbolTable class from the current directory for symbol management
 from .symboltable import SymbolTable
@@ -35,16 +35,38 @@ class SemanticAnalyzer(NodeVisitor):
 
         # Temporary list to store function arguments during analysis
         self._tempArgs = []
-
         # Flag indicating whether an error has occurred during analysis
         self.hadError: bool = False
         # List to store error objects (NameErr, TypeErr, SyntaxErr)
         self._errList: List[Union[NameErr, TypeErr, SyntaxErr]] = []
 
         # Flag to check if 'break' and 'continue' statements are outside a loop
-        self._inLoop: bool = False
+        self._inLoop: bool = False 
+    
+    
+    def getErrorList(self) -> List[Union[NameErr, TypeErr, SyntaxErr]]:
+        return self._errList
 
     # add builtin symbols to global symbol table
+    def _error(self, typ: str, msg: str, tok: Token) -> None:
+        self.hadError = True
+
+        # name error
+        if typ == 'n':
+            self._errList.append(NameErr(msg, tok.line, tok.position))
+
+        # type error
+        elif typ == 't':
+            self._errList.append(TypeErr(msg, tok.line))
+
+        # syntax error
+        elif typ == 's':
+            # the only syntax error that can occur is continue
+            #   or break outside loop
+            self._errList.append(SyntaxErr(msg, tok.line))
+
+
+   
     def _initMainST(self) -> None:
         """
         Initialize the main symbol table with built-in symbols.
@@ -76,7 +98,6 @@ class SemanticAnalyzer(NodeVisitor):
             # Note: The loop above adds each built-in function to the symbol table with a placeholder parameter 's'.
             # In a more complete implementation, you would define the actual parameters for each function.
 
-
     def visit_ProgramNode(self, node) -> None:
         """
         Visit ProgramNode and perform static analysis.
@@ -101,7 +122,6 @@ class SemanticAnalyzer(NodeVisitor):
         for d in node.declarationList:
             self.visit(d)
 
-
     def visit_VarDeclNode(self, node) -> None:
         """
         Visit VarDeclNode and perform static analysis.
@@ -113,15 +133,12 @@ class SemanticAnalyzer(NodeVisitor):
         :return: None
         """
         # Check for duplicate variable definitions
-        if self._currentST.get(node.id.token.value, True) is not None:
+        if self._currentST.get(node.id.token.value, True) != None:
             self._error('n', f"duplicate definition of name '{node.id.token.value}'", node.id.token)
             return
 
-        # Add the variable symbol to the current symbol table
-        self._currentST.add(VariableSymbol(node.id.token.value))
-
         # Check if there is an assigned expression
-        if node.exprNode is not None:
+        if node.exprNode != None:
             # Get the type and token of the expression
             typ, tok = self.visit(node.exprNode)
             # Check if the assigned expression is a function (which is not allowed)
@@ -159,12 +176,14 @@ class SemanticAnalyzer(NodeVisitor):
         :return: A tuple containing the identifier type and the identifier token.
         """
         # Check if the identifier is not declared in the current symbol table
-        if self._currentST.get(node.token.value) is None:
+        if self._currentST.get(node.token.value) == None:
             self._error('n', f"name '{node.token.value}' not declared", node.token)
             return "identifier", node.token
 
         # Return the type of the identifier from the current symbol table and the identifier token
         return self._currentST.get(node.token.value).type, node.token
+
+
 
     def visit_ArrayNode(self, node) -> Tuple[str, TokenType]:
         """
@@ -179,10 +198,9 @@ class SemanticAnalyzer(NodeVisitor):
         tok = None
         # Visit each element in the array
         for e in node.elements:
-            # Get the type and token of the element
+                # Get the type and token of the element
             typ, tok = self.visit(e)
-
-        # Return the array type and the token of the last element
+         # Return the array type and the token of the last element
         return "array", tok
 
 
@@ -207,6 +225,8 @@ class SemanticAnalyzer(NodeVisitor):
 
         # Return the variable type and an empty string (no specific token needed)
         return "variable", ""
+
+
     def visit_NumberNode(self, node) -> Tuple[str, TokenType]:
         """
         Visit NumberNode and perform static analysis.
@@ -244,6 +264,7 @@ class SemanticAnalyzer(NodeVisitor):
         """
         # Return the type ("boolean") and the token for the 'False' value
         return "boolean", node.token
+
 
     def visit_NilNode(self, node) -> Tuple[str, TokenType]:
         """
@@ -292,8 +313,8 @@ class SemanticAnalyzer(NodeVisitor):
                 self._error('t', f"cannot add '{typl}' to '{typr}'", tokl)
 
         # Return the common type and the token of the left expression
-        return typl, tokl
-    
+        return typl, tokl  
+
 
     def visit_SubNode(self, node) -> Tuple[TokenType, TokenType]:
         """
@@ -308,9 +329,10 @@ class SemanticAnalyzer(NodeVisitor):
         typl, tokl = self.visit(node.left)
         # Visit the right expression
         typr, tokr = self.visit(node.right)
-
+        
         # Check if both expressions are not variables
         if typl != "variable" and typr != "variable":
+            
             # Check if the types are incompatible for subtraction
             if typr != typl:
                 self._error('t', f"cannot subtract '{typr}' from '{typl}'", tokl)
@@ -338,7 +360,7 @@ class SemanticAnalyzer(NodeVisitor):
             # Check if the types are incompatible for multiplication
             if typr != typl:
                 self._error('t', f"cannot multiply '{typl}' by '{typr}'", tokl)
-
+        
         # Return the common type and the token of the left expression
         return typl, tokl
 
@@ -359,7 +381,7 @@ class SemanticAnalyzer(NodeVisitor):
 
         # Check if both expressions are not variables
         if typl != "variable" and typr != "variable":
-            # Check if the types are incompatible for division
+             # Check if the types are incompatible for division
             if typr != typl:
                 self._error('t', f"cannot divide '{typl}' by '{typr}'", tokl)
 
@@ -385,10 +407,12 @@ class SemanticAnalyzer(NodeVisitor):
         if typl != "variable" and typr != "variable":
             # Check if the types are incompatible for modulo operation
             if typr != typl:
-                self._error('t', f"cannot modulo '{typl}' by '{typr}'", tokl)
-
+                self._error('t', f"cannot modulo '{typl}' by '{typr}'", tokl)\
+                
         # Return the common type and the token of the left expression
         return typl, tokl
+
+
     def visit_EqualNode(self, node) -> Tuple[TokenType, TokenType]:
         """
         Visit EqualNode and perform static analysis.
@@ -437,10 +461,11 @@ class SemanticAnalyzer(NodeVisitor):
         # Visit the left expression
         typl, tokl = self.visit(node.left)
         # Visit the right expression
-        self.visit(node.right)
-
+        self.visit(node.right)\
+        
         # Return the type and token of the left expression
         return typl, tokl
+
 
     def visit_LessThanNode(self, node) -> Tuple[TokenType, TokenType]:
         """
@@ -455,8 +480,7 @@ class SemanticAnalyzer(NodeVisitor):
         typl, tokl = self.visit(node.left)
         # Visit the right expression
         self.visit(node.right)
-
-        # Return the type and token of the left expression
+         # Return the type and token of the left expression
         return typl, tokl
 
 
@@ -492,8 +516,9 @@ class SemanticAnalyzer(NodeVisitor):
         # Visit the right expression
         self.visit(node.right)
 
-        # Return the type and token of the left expression
+        # Return the type and token of the left expressio
         return typl, tokl
+
 
     def visit_AndNode(self, node) -> Tuple[TokenType, TokenType]:
         """
@@ -504,11 +529,10 @@ class SemanticAnalyzer(NodeVisitor):
         :param node: The AndNode to visit.
         :return: A tuple containing the type and token of the left expression.
         """
-        # Visit the left expression
+         # Visit the left expression
         typl, tokl = self.visit(node.left)
         # Visit the right expression
         self.visit(node.right)
-
         # Return the type and token of the left expression
         return typl, tokl
 
@@ -524,9 +548,8 @@ class SemanticAnalyzer(NodeVisitor):
         """
         # Visit the left expression
         typl, tokl = self.visit(node.left)
-        # Visit the right expression
+        # Visit the right expression    
         self.visit(node.right)
-
         # Return the type and token of the left expression
         return typl, tokl
 
@@ -542,9 +565,29 @@ class SemanticAnalyzer(NodeVisitor):
         """
         # Visit the expression being negated
         typ, tok = self.visit(node.node)
-
+        
         # Return the type and token of the expression being negated
         return typ, tok
+    
+
+
+    def visit_NotNode(self, node) -> Tuple[str, str]:
+        self.visit(node.node)
+        return "variable", ""
+
+    
+    def visit_IfNode(self, node) -> None:
+        self.visit(node.ifBlock)
+        for b in node.elsifBloks:
+            self.visit(b)
+        if node.elseBlock != None:
+            self.visit(node.elseBlock)
+
+
+    def visit_ConditionalNode(self, node) -> None:
+        self.visit(node.condition)
+        self.visit(node.statement)
+
 
     def visit_WhileNode(self, node) -> None:
         """
@@ -566,7 +609,7 @@ class SemanticAnalyzer(NodeVisitor):
         self._inLoop = False
 
 
-    def visit_BlockNode(self, node, isFunction=False) -> None:
+    def visit_BlockNode(self, node, isFunction = False) -> None:
         """
         Visit BlockNode and perform static analysis.
 
@@ -583,7 +626,6 @@ class SemanticAnalyzer(NodeVisitor):
             s: SymbolTable = SymbolTable("block")
             # Set the enclosing scope of the new symbol table to the current symbol table
             s.setEnclosingScope(self._currentST)
-
             # Add temporary arguments to the new symbol table
             for a in self._tempArgs:
                 s.add(a)
@@ -616,10 +658,10 @@ class SemanticAnalyzer(NodeVisitor):
         """
         # Visit the expression in the return statement
         typ, tok = self.visit(node.expr)
-
         # Check if the expression returns a function, generating an error
         if typ == "function":
             self._error('t', f"Cannot return function '{tok.value}' from function", tok)
+
 
     def visit_ContinueNode(self, node) -> None:
         """
@@ -650,6 +692,7 @@ class SemanticAnalyzer(NodeVisitor):
             # Generate an error for 'break' outside a loop
             self._error('s', "'break' outside loop", node.tok)
 
+
     def visit_FunDeclNode(self, node) -> None:
         """
         Visit FunDeclNode and perform static analysis.
@@ -660,8 +703,8 @@ class SemanticAnalyzer(NodeVisitor):
         :param node: The FunDeclNode to visit.
         :return: None
         """
-        # Check for duplicate function definitions
-        if self._currentST.get(node.id.token.value) is not None:
+         # Check for duplicate function definitions
+        if self._currentST.get(node.id.token.value) != None:
             self._error('n', f"duplicate definition of name '{node.id.token.value}'", node.id.token)
             return
 
@@ -671,7 +714,7 @@ class SemanticAnalyzer(NodeVisitor):
 
         # Add the function symbol to the symbol table
         self._currentST.add(FunctionSymbol(node.id.token.value, node.blockNode, self._tempArgs))
-
+        
         # Visit the block node inside the function, indicating that it's a function block
         self.visit_BlockNode(node.blockNode, True)
 
@@ -689,7 +732,7 @@ class SemanticAnalyzer(NodeVisitor):
         # Get the type and token of the symbol being called
         t, tok = self.visit(node.nameNode)
 
-        # Check if the symbol is callable (a function)
+         # Check if the symbol is callable (a function)
         if t != "function":
             self._error('t', f"Symbol '{tok.value}' of type '{t}' is not callable", tok)
             return "call", tok
@@ -700,15 +743,16 @@ class SemanticAnalyzer(NodeVisitor):
             self.visit(a)
             argc += 1
 
-        # Assert that the nameNode is an IdentifierNode
+         # Assert that the nameNode is an IdentifierNode
         assert type(node.nameNode).__name__ == "IdentifierNode"
-
+            
         # Get the expected number of positional arguments for the function
         count: int = len(self._currentST.get(node.nameNode.token.value).argSymbols)
 
         # Check for argument count mismatches
         if count != argc:
             self._error('t', f"Expected {count} positional argument(s) for '{tok.value}', got {argc}", tok)
-
+            
         # Return the type ("call") and the token of the function being called
         return "call", tok
+

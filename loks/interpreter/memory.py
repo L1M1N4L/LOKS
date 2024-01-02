@@ -80,7 +80,7 @@ class Environment:
         if self.enclosingEnv is None:
             return self._members.get(name)
 
-        if self._members.get(name) is not None:
+        if self._members.get(name) != None:
             return self._members.get(name)
 
         return self.enclosingEnv.get(name)

@@ -10,7 +10,7 @@ class Error(Exception):
         # Define the string representation of the exception.
         if self.pos is None and self.line is None:
             return f"{self.type}: {self.msg}"
-        if self.pos is not None:
+        if self.pos != None:
             return f"{self.type}(line {self.line}): {self.msg} at character {self.pos}"
         return f"{self.type}(line {self.line}): {self.msg}"
 
