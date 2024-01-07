@@ -11,7 +11,7 @@ fun printBoard() {
     println('|' + choices[3] + '|' + choices[4] + '|' + choices[5] + '|');
     println(' -----');
     println('|' + choices[6] + '|' + choices[7] + '|' + choices[8] + '|');
-    println(' -----\n');
+    println(' -----\n');    
 }
 
 // Initialize count and draw flag
@@ -85,4 +85,5 @@ while (!winner) {
 // Display the result of the game
 if (!isDraw)
     println("Player " + str(int(playerOneTurn) + 1) + " wins!\n");
+
 

@@ -26,10 +26,10 @@ import argparse
 def main():
     # Setup CLI by creating an ArgumentParser object with a program description
     argParser = argparse.ArgumentParser(
-        description="loks-py: the loks interpreter"
+        description="LOKS: the loks interpreter"
     )
 
-    # Define a required positional argument for the path to a locks file
+    # Define a required positional argument for the path to a loks file
     argParser.add_argument(
         'path',
         metavar='path',
